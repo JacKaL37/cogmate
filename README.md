@@ -1,0 +1,2 @@
+# cogmate
+ur thinkin buddy
