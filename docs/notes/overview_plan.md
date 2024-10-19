@@ -1,4 +1,17 @@
 
+# Interface
+
+lots of Panels
+
+Tabs for multiple conversations (dropdown for mobile)
+
+co-panel for artifacts (slide-up drawer for mobile)
+- sibling to the chat panel
+
+side panels for prompt browsing, settings, and conversation histories
+
+
+
 # ISSUES
 
 get the streaming workin' proper.
@@ -6,12 +19,40 @@ get the streaming workin' proper.
 
 # FEATURES
 
+Chat system:
+- chats have:
+  - conversation history
+  - active artifact/document
+  - name (gathered after inactivity)
+  - summary (gathered after inactivity)
+  - current prompt selection
+    - this can change between messages, but it's always maintained
+- multiple tabs: you can open MULTIPLE CHATS IN MULTIPLE TAAAAABSSSS
+- philosophically, this is the core `document` of the app. 
+  - This is what the user spends their time creating here with the AI tagging in
+  - It's the document, it's 
+
+
+Artifacts:
+- belong to conversations
+- they represent the shared "world" between the user and the AI, and the work we're producing
+- can have multiple versions logged
+  - cache versions on every send-- send==save
+  - (maybe make use of a diff for efficiency's sake)
+- they send their state in a json blob.
+- stretch goals: 
+  - AI function calls for this front-end to send edits directly into the editer by way of the diff visualizations in monaco
+  - would also cache version iterations that have been sent here. 
+- The key though is that the state is always whatever it was *when* the user sends the message.
+
+
 Tool toggles:
 - search duck-duck-go
 - search archiv
 - get weather
 
-I think we aren't looking for `autonomous` agent workflows in this application
+Agents: 
+- I think we aren't looking for `autonomous` agent workflows in this application
 - but we may want `directed` agent workflows.
   - user can say "give it to this agent, and then to this agent" if, say, you want a second agent to critique the work of the first agent. 
   - prompt sequestration: the "another pair of eyes" effect 
