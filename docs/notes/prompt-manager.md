@@ -10,3 +10,49 @@ Squunch the chevron to overlap with the page icon in the browser-- the icon need
 
 Need a delete button for a given prompt. 
 
+
+Prompts can be added to a chat as a discussant:
+- by default, 1 ai and 1 user discussant
+- the prompt chosen is displayed above the input box in pill-scroll format
+  - now the user can select which discussant will reply to the next message
+
+
+Three types of prompts: 
+- Base prompts (only 1 can be selected at a time), displayed like a file tree
+  - Project Prompts, which inherit project prompts 
+  - Single Prompts, which use a single prompt
+  - might keep these separate on the interface, I dunno
+- Mix-in Prompts, which are all appended to the system prompt additively. 
+  - using a searchable checkbox system (tags and search, blah blah) 
+  - should be able to specify order... 
+
+
+
+Agents are given "workspaces" in the form of a filetree:
+- file folders in the user's filespace (i.e., database)
+- for each user and each conversation:
+  - they follow the same structure as the project prompts
+    - this is where agents can download or create files for use in case of file-writing prompts.
+    - and those folders can also be where the agents' attachments are stored
+
+
+Evolving prompts into agents:
+- add tools
+  - tools are inherited in project prompts
+- add context providers
+  - from whatever systems are available /shrug 
+- Human User is left to be the one wielding the agents every step of the conversation. 
+  - Human-In-Loop-Optimization, baby. 
+
+
+
+Icon ideas:
+- Prompts with children, closed
+- Prompts with children, open
+- Prompts without children
+
+current: [chevron-right, chevron-down, nothing at all]
+
+lucide options:
+closed: 
+- book-text, book-open-text, file-text
