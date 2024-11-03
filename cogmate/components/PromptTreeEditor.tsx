@@ -42,7 +42,7 @@ const getPathToNode = (node: PromptNode, targetId: string): PromptNode[] => {
   return []
 }
 
-export function AdvancedPromptTreeViewerComponent() {
+export default function PromptTreeEditor() {
   const [tree, setTree] = useState<PromptNode>(() => {
     const root = createNode('root', 'AI Project Assistant', 'This is the root node of our AI project assistant. It contains overall project description and status information.', null)
     

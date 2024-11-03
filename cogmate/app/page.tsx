@@ -1,5 +1,5 @@
-import DynamicAIChat from "@/components/DynamicAIChat";
+import WorkshopDashboard from "@/components/WorkshopDashboard";
 
 export default function Page() {
-  return <DynamicAIChat />;
+  return <WorkshopDashboard />;
 }

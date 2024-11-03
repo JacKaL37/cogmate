@@ -56,7 +56,7 @@ const initialPrompts: Prompt = {
   ]
 }
 
-export default function Component() {
+export default function PromptManager() {
   const [prompts, setPrompts] = useState<Prompt>(initialPrompts)
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null)
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["root"]))
