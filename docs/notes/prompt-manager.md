@@ -24,7 +24,9 @@ Three types of prompts:
   - might keep these separate on the interface, I dunno
 - Mix-in Prompts, which are all appended to the system prompt additively. 
   - using a searchable checkbox system (tags and search, blah blah) 
-  - should be able to specify order... 
+    - ^ should be able to specify order... 
+  - e.g.: "Values: socratic yadda yadda", "Personality: you're a yadda yadda", "Current Task: work with the user to yadda yadda"
+
 
 
 
