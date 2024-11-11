@@ -4,6 +4,7 @@ import React from 'react';
 import DynamicAIChat from '@/components/DynamicAIChat';
 import PromptTreeEditor from '@/components/PromptTreeEditor';
 import PromptManager from '@/components/PromptManager';
+import TextBlobGraph from '@/components/TextBlobGraph';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { Slider } from '@/components/ui/slider';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import appReducer from '@/store/appSlice';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 
 const store = configureStore({
   reducer: {
@@ -26,6 +28,7 @@ const components = [
   { name: 'DynamicAIChat', component: <DynamicAIChat /> },
   { name: 'PromptManager', component: <PromptManager /> },
   { name: 'PromptTreeEditor', component: <PromptTreeEditor /> },
+  // { name: 'TextBlobGraph', component: <TextBlobGraph /> },
   { name: 'Tooltip', component: (
     <Tooltip>
       <TooltipTrigger>Hover me</TooltipTrigger>
@@ -64,22 +67,29 @@ const WorkshopDashboard = () => {
     <Provider store={store}>
       <TooltipProvider>
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: "black", color: "white" }}>
-          <div style={{ flex: '1 1 auto', overflowY: 'auto', padding: '16px' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-              {components.map(({ name, component }) => (
-                <div key={name} style={{ flex: '1 1 calc(33.333% - 16px)', boxSizing: 'border-box', padding: '16px', border: '1px solid #ccc', borderRadius: '4px', overflowY: 'scroll',  maxHeight: 'calc(80vh - 200px)' }}>
-                  <h3>{name}</h3>
-                  {component}
+          <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel>
+              <div style={{ flex: '1 1 auto', overflowY: 'auto', padding: '16px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                  {components.map(({ name, component }) => (
+                    <div key={name} style={{ flex: '1 1 calc(33.333% - 16px)', boxSizing: 'border-box', padding: '16px', border: '1px solid #ccc', borderRadius: '4px', overflowY: 'scroll', maxHeight: 'calc(80vh - 200px)' }}>
+                      <h3>{name}</h3>
+                      {component}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-          <div style={{ flex: '0 0 200px', overflowY: 'auto', padding: '16px', backgroundColor: '#222' }}>
-            <h3>Global App State</h3>
-            <pre style={{ background: '#010101', padding: '8px', borderRadius: '4px', color: 'white' }}>
-              {/* Display global app state here */}
-            </pre>
-          </div>
+              </div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={25}>
+              <div style={{ flex: '0 0 200px', overflowY: 'auto', padding: '16px', backgroundColor: '#222' }}>
+                <h3>Global App State</h3>
+                <pre style={{ background: '#010101', padding: '8px', borderRadius: '4px', color: 'white' }}>
+                  {/* Display global app state here */}
+                </pre>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
       </TooltipProvider>
     </Provider>
