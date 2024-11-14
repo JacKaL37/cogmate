@@ -16,6 +16,10 @@ type PromptNode = {
   parent: PromptNode | null
 }
 
+type Tree = {
+  root: PromptNode
+}
+
 const createNode = (id: string, title: string, prompt: string, parent: PromptNode | null): PromptNode => ({
   id,
   title,
@@ -43,30 +47,49 @@ const getPathToNode = (node: PromptNode, targetId: string): PromptNode[] => {
 }
 
 export default function PromptTreeEditor() {
-  const [tree, setTree] = useState<PromptNode>(() => {
-    const root = createNode('root', 'Project Assistant', 'This is the root node of our AI project assistant. It contains overall project description and status information.', null)
-    
-    const research = createNode('research', 'Research', 'Conduct thorough research on AI technologies and methodologies relevant to our project.', root)
-    root.children.push(research)
-    
-    const literatureReview = createNode('literature-review', 'Literature Review', 'Review recent academic papers and articles on AI advancements.', research)
-    const marketAnalysis = createNode('market-analysis', 'Market Analysis', 'Analyze current AI products and services in the market.', research)
-    research.children.push(literatureReview, marketAnalysis)
-    
-    const development = createNode('development', 'Development', 'Guide the development process of our AI project.', root)
-    root.children.push(development)
-    
-    const modelArchitecture = createNode('model-architecture', 'Model Architecture', 'Design and implement the AI model architecture.', development)
-    const dataPipeline = createNode('data-pipeline', 'Data Pipeline', 'Develop robust data ingestion and preprocessing pipelines.', development)
-    development.children.push(modelArchitecture, dataPipeline)
-    
-    const evaluation = createNode('evaluation', 'Evaluation', 'Set up evaluation metrics and testing procedures for our AI system.', root)
-    root.children.push(evaluation)
-    
-    return root
+  const [tree, setTree] = useState<Tree>(() => {
+    // Base System Context
+    const root = createNode('root', 'System Context', 
+      'You are assisting with a scientific research project on corticospinal tract pathology. ' +
+      'Grant #NSF-2024-123. Budget: $2.5M. Duration: 3 years. ' +
+      'Multi-center study across 3 hospitals. IRB approval: #2024-45-NEU.', null)
+
+    // Project Overview
+    const overview = createNode('overview', 'Project Scope',
+      'Investigation of corticospinal tract biomarkers in neurodegenerative disorders. ' +
+      'Aims: 1) Establish imaging protocols 2) Validate clinical correlations 3) Develop diagnostic criteria. ' +
+      'Target enrollment: 200 patients, 50 controls.', root)
+    root.children.push(overview)
+
+    // Methods & Approach
+    const methods = createNode('methods', 'Methodology',
+      'Combined multimodal imaging and clinical assessment approach. ' +
+      'Primary: 3T MRI with DTI protocol. Secondary: TMS, EMG studies. ' +
+      'Longitudinal follow-up at 0, 6, 12 months.', root)
+    root.children.push(methods)
+
+    // Data Collection
+    const data = createNode('data', 'Data Collection',
+      'Standardized protocols for: 1) MRI acquisition 2) Clinical assessments 3) Biospecimen collection. ' +
+      'RedCap database implementation. Quality control procedures.', methods)
+    methods.children.push(data)
+
+    // Analysis Framework
+    const analysis = createNode('analysis', 'Analysis Framework',
+      'Mixed methods: Quantitative imaging metrics, clinical scores, biomarker levels. ' +
+      'Statistical approach: Linear mixed models, machine learning classification.', methods)
+    methods.children.push(analysis)
+
+    // Expected Outcomes
+    const outcomes = createNode('outcomes', 'Expected Outcomes',
+      'Primary: Validated imaging biomarkers. Secondary: Clinical prediction models. ' +
+      'Deliverables: Standardized protocols, public dataset, diagnostic criteria.', root)
+    root.children.push(outcomes)
+
+    return { root }
   })
 
-  const [currentPath, setCurrentPath] = useState<PromptNode[]>([tree])
+  const [currentPath, setCurrentPath] = useState<PromptNode[]>([tree.root])
   const [siblings, setSiblings] = useState<PromptNode[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -91,7 +114,6 @@ export default function PromptTreeEditor() {
   const handlers = useSwipeable({
     onSwipedLeft: () => handleSwipe('next'),
     onSwipedRight: () => handleSwipe('prev'),
-    //preventDefaultTouchmoveEvent: true,
     preventScrollOnSwipe: true,
     trackMouse: true
   })
@@ -105,7 +127,7 @@ export default function PromptTreeEditor() {
   }
 
   const updatePath = (id: string) => {
-    const newPath = getPathToNode(tree, id)
+    const newPath = getPathToNode(tree.root, id)
     if (newPath.length > 0) {
       setCurrentPath(newPath)
     }
@@ -138,7 +160,7 @@ export default function PromptTreeEditor() {
 
   const updateTree = (updatedNode: PromptNode) => {
     const newTree = { ...tree }
-    const nodeToUpdate = findNodeById(newTree, updatedNode.id)
+    const nodeToUpdate = findNodeById(newTree.root, updatedNode.id)
     if (nodeToUpdate) {
       Object.assign(nodeToUpdate, updatedNode)
     }
@@ -160,17 +182,17 @@ export default function PromptTreeEditor() {
   const getHierarchyString = (path: PromptNode[]): string => {
     return path
       .slice(0, -1)
-      .map(node => `--- ${node.title} ---\n${node.prompt}\n\n`)
+      .map(node => `---\n${node.title}\n---\n${node.prompt}\n\n`)
       .join('')
   }
 
   const getCurrentString = (path: PromptNode[]): string => {
     const node = path[path.length - 1]
-    return `--- ${node.title} ---\n${node.prompt}\n`
+    return `---\n${node.title}\n---\n${node.prompt}\n`
   }
 
   return (
-    <div className="min-h-window bg-black text-white p-4 max-w-sm mx-auto">
+    <div className="min-h-window bg-black text-white p-4 max-w-md mx-auto">
       {currentPath.length > 1 && (
       <Card className="mb-4 bg-black border-magenta-500 h-[250px]"> {/* Set fixed height */}
         <CardContent className="p-4 h-full overflow-y-auto flex flex-col-reverse"> {/* Enable scroll and reverse column */}
