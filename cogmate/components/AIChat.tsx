@@ -502,7 +502,7 @@ const AIChat: React.FC = () => {
   );
 
   return (
-    <div className="flex h-screen bg-black text-white relative">
+    <div className="flex h-full bg-black text-white relative">
       <ChatHistoryPanel
         chats={chatState.chats}
         currentChatId={chatState.currentChatId}

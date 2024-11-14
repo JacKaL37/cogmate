@@ -44,7 +44,7 @@ const getPathToNode = (node: PromptNode, targetId: string): PromptNode[] => {
 
 export default function PromptTreeEditor() {
   const [tree, setTree] = useState<PromptNode>(() => {
-    const root = createNode('root', 'AI Project Assistant', 'This is the root node of our AI project assistant. It contains overall project description and status information.', null)
+    const root = createNode('root', 'Project Assistant', 'This is the root node of our AI project assistant. It contains overall project description and status information.', null)
     
     const research = createNode('research', 'Research', 'Conduct thorough research on AI technologies and methodologies relevant to our project.', root)
     root.children.push(research)
@@ -91,7 +91,8 @@ export default function PromptTreeEditor() {
   const handlers = useSwipeable({
     onSwipedLeft: () => handleSwipe('next'),
     onSwipedRight: () => handleSwipe('prev'),
-    preventDefaultTouchmoveEvent: true,
+    //preventDefaultTouchmoveEvent: true,
+    preventScrollOnSwipe: true,
     trackMouse: true
   })
 
@@ -156,99 +157,124 @@ export default function PromptTreeEditor() {
     updateTree(updatedNode)
   }
 
+  const getHierarchyString = (path: PromptNode[]): string => {
+    return path
+      .slice(0, -1)
+      .map(node => `--- ${node.title} ---\n${node.prompt}\n\n`)
+      .join('')
+  }
+
+  const getCurrentString = (path: PromptNode[]): string => {
+    const node = path[path.length - 1]
+    return `--- ${node.title} ---\n${node.prompt}\n`
+  }
+
   return (
     <div className="min-h-window bg-black text-white p-4 max-w-sm mx-auto">
-      {currentPath.map((node, index) => (
-        <Card key={node.id} className="mb-4 bg-black border-magenta-500" {...handlers}>
-          <CardContent className="p-4">
-            {index === currentPath.length - 1 && (
+      {currentPath.length > 1 && (
+      <Card className="mb-4 bg-black border-magenta-500 h-[250px]"> {/* Set fixed height */}
+        <CardContent className="p-4 h-full overflow-y-auto flex flex-col-reverse"> {/* Enable scroll and reverse column */}
+          <div className="text-fuchsia-500 whitespace-pre-wrap font-mono">
+            {getCurrentString(currentPath)}
+          </div>
+          <div className="text-white whitespace-pre-wrap font-mono">
+            {getHierarchyString(currentPath)}
+          </div>
+        </CardContent>
+      </Card>
+    )}
+      <Card key={currentPath[currentPath.length - 1].id} className="mb-4 bg-black border-magenta-500" {...handlers}>
+        <CardContent className="p-4">
+          {currentPath.length > 1 && (
+            <>
               <div className="flex flex-col mb-2">
                 <Button
                   variant="outline"
                   onClick={handleNavigateUp}
-                  className="w-full bg-black text-red-500 border-red-500 hover:bg-red-900"
-                  disabled={currentPath.length === 1}
+                  className="w-full text-red-500 bg-red-950 border-none hover:bg-red-900"
                 >
                   <ChevronUp className="h-4 w-4 mr-2" />
                 </Button>
               </div>
-            )}
-            <div className="flex items-center mb-2">
+              <div className="flex items-center mb-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => handleSwipe('prev')}
+                  disabled={currentIndex === 0}
+                  className="text-indigo-400 bg-indigo-950 border-none hover:bg-indigo-900"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Input
+                  value={currentPath[currentPath.length - 1].title}
+                  onChange={handleTitleChange}
+                  className="mx-2 bg-black text-white border-indigo-400"
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => handleSwipe('next')}
+                  disabled={currentIndex === siblings.length - 1}
+                  className="text-indigo-400 bg-indigo-950 border-none hover:bg-indigo-900"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </>
+          )}
+          {currentPath.length === 1 && (
+            <Input
+              value={currentPath[currentPath.length - 1].title}
+              onChange={handleTitleChange}
+              className="mb-2 bg-black text-white border-indigo-400"
+            />
+          )}
+          <Textarea
+            value={currentPath[currentPath.length - 1].prompt}
+            onChange={handlePromptChange}
+            className="mb-2 bg-black text-white border-indigo-400 h-24 resize-none"
+          />
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between">
               <Button
                 variant="outline"
-                size="icon"
-                onClick={() => handleSwipe('prev')}
-                disabled={currentIndex === 0}
-                className="text-indigo-400 bg-black border-indigo-400 hover:bg-indigo-900"
+                onClick={handleAddChild}
+                className="flex-1 bg-black mr-2 text-cyan-400 border-cyan-400 hover:bg-cyan-900"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <Plus className="h-4 w-4 mr-2" />
+                Add Child
               </Button>
-              <Input
-                value={node.title}
-                onChange={handleTitleChange}
-                className="mx-2 bg-black text-white border-indigo-400"
-                disabled={index !== currentPath.length - 1}
-              />
               <Button
                 variant="outline"
-                size="icon"
-                onClick={() => handleSwipe('next')}
-                disabled={currentIndex === siblings.length - 1}
-                className="text-indigo-400 bg-black border-indigo-400 hover:bg-indigo-900"
+                onClick={handleDelete}
+                className="flex-1 bg-black text-fuchsia-500 border-fuchsia-500 hover:bg-fuchsia-900"
+                disabled={currentPath.length === 1}
               >
-                <ChevronRight className="h-4 w-4" />
+                <Trash className="h-4 w-4 mr-2" />
+                Delete
               </Button>
             </div>
-            <Textarea
-              value={node.prompt}
-              onChange={handlePromptChange}
-              className="mb-2 bg-black text-white border-indigo-400 h-24 resize-none"
-              disabled={index !== currentPath.length - 1}
-            />
-            {index === currentPath.length - 1 && (
-              <div className="flex flex-col gap-2">
-                
-                <div className="flex justify-between">
+          </div>
+          {currentPath[currentPath.length - 1].children.length > 0 && (
+            <div className="mt-4">
+              <h3 className="text-cyan-400 mb-2">Child Nodes:</h3>
+              <div className="flex flex-wrap gap-2">
+                {currentPath[currentPath.length - 1].children.map(child => (
                   <Button
+                    key={child.id}
                     variant="outline"
-                    onClick={handleAddChild}
-                    className="flex-1 bg-black mr-2 text-cyan-400 border-cyan-400 hover:bg-cyan-900"
+                    onClick={() => updatePath(child.id)}
+                    className="text-indigo-400 border-indigo-400 hover:bg-indigo-900"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Child
+                    {child.title}
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={handleDelete}
-                    className="flex-1 bg-black text-fuchsia-500 border-fuchsia-500 hover:bg-fuchsia-900"
-                    disabled={currentPath.length === 1}
-                  >
-                    <Trash className="h-4 w-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
+                ))}
               </div>
-            )}
-            {node.children.length > 0 && index === currentPath.length - 1 && (
-              <div className="mt-4">
-                <h3 className="text-cyan-400 mb-2">Child Nodes:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {node.children.map(child => (
-                    <Button
-                      key={child.id}
-                      variant="outline"
-                      onClick={() => updatePath(child.id)}
-                      className="text-indigo-400 border-indigo-400 hover:bg-indigo-900"
-                    >
-                      {child.title}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
       <div ref={bottomRef} />
     </div>
   )
