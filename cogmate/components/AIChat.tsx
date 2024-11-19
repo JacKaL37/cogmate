@@ -26,9 +26,11 @@ import {
   ChevronRight,
   Search,
 } from "lucide-react";
+import Message from "@/components/Message";
+import "@/app/globals.css";
 
 // Types
-type Message = {
+type MessageType = {
   role: "user" | "assistant" | "system";
   content: string;
   model?: string;
@@ -38,7 +40,7 @@ type Message = {
 type Chat = {
   id: string;
   title: string;
-  messages: Message[];
+  messages: MessageType[];
 };
 
 type ChatState = {
@@ -53,7 +55,7 @@ type ChatState = {
 
 // Components
 
-const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
+const ChatMessage: React.FC<{ message: MessageType }> = ({ message }) => {
   const getCardClassName = () => {
     switch (message.role) {
       case "user":
@@ -102,7 +104,7 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
   );
 };
 
-const ConversationPanel: React.FC<{ messages: Message[] }> = ({ messages }) => {
+const ConversationPanel: React.FC<{ messages: MessageType[] }> = ({ messages }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -112,7 +114,7 @@ const ConversationPanel: React.FC<{ messages: Message[] }> = ({ messages }) => {
   return (
     <div className="flex-1 overflow-y-auto p-4 bg-black">
       {messages.map((message, index) => (
-        <ChatMessage key={index} message={message} />
+        <Message key={index} {...message} />
       ))}
       <div ref={messagesEndRef} />
     </div>
@@ -419,7 +421,7 @@ const AIChat: React.FC = () => {
     );
     if (!currentChat) return;
 
-    const newMessage: Message = { role: "user", content: message };
+    const newMessage: MessageType = { role: "user", content: message };
     const updatedMessages = [...currentChat.messages, newMessage];
 
     updateChatState({
@@ -433,7 +435,7 @@ const AIChat: React.FC = () => {
     setIsLoading(true);
 
     // Simulating API call and streaming response
-    const assistantMessage: Message = {
+    const assistantMessage: MessageType = {
       role: "assistant",
       content:
         "This is a simulated response. In a real implementation, you would send the message to the OpenAI API and stream the response back.",
