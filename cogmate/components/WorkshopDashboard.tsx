@@ -29,6 +29,8 @@ const components = [
   { name: 'PromptTreeEditor', component: <PromptTreeEditor /> },
   { name: 'DynamicAIChat', component: <DynamicAIChat /> },
   { name: 'Message', component: <Message role="assistant" content="This is an example message from the assistant." model="gpt-3.5-turbo" temperature={0.7} /> },
+  { name: 'Message', component: <Message role="assistant" content="This is an example messafge with a custom color." model="gpt-3.5-turbo" temperature={0.7} customColor="#00ff00" /> },
+  { name: 'Message', component: <Message role="assistant" content="This is an example messafge with multiple custom colors." model="gpt-3.5-turbo" temperature={0.7} customColor={["#00ff00","#ff0000"]} /> },
 ];
 
 const WorkshopDashboard = () => {
