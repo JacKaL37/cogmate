@@ -62,6 +62,7 @@ Prompt:
 - prompt: str
 - siblings: 
 - color: color
+- emoji: emoji
 
 
 PromptTree:
